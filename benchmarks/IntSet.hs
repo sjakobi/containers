@@ -14,7 +14,9 @@ main = do
         s_odd = S.fromAscList elems_odd :: S.IntSet
     evaluate $ rnf [s, s_even, s_odd]
     defaultMain
-        [ bench "member" $ whnf (member elems) s
+        [ bench "size" $ whnf S.size s
+        , bench "size (foldl')" $ whnf (S.foldl' (\i _ -> i + 1) 0) s
+        , bench "member" $ whnf (member elems) s
         , bench "insert" $ whnf (ins elems) S.empty
         , bench "map" $ whnf (S.map (+ 1)) s
         , bench "filter" $ whnf (S.filter ((== 0) . (`mod` 2))) s
