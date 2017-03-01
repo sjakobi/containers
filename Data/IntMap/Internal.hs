@@ -515,6 +515,7 @@ size :: IntMap a -> Int
 size (Bin _ _ l r) = size l + size r
 size (Tip _ _) = 1
 size Nil = 0
+{-# INLINE size #-}
 
 -- | /O(min(n,W))/. Is the key a member of the map?
 --
