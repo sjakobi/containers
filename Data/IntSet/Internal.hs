@@ -314,6 +314,7 @@ size :: IntSet -> Int
 size (Bin _ _ l r) = let !n = size l + size r in n
 size (Tip _ bm) = let !n = bitcount 0 bm in n
 size Nil = 0
+{-# INLINE size #-}
 
 -- | /O(min(n,W))/. Is the value a member of the set?
 
