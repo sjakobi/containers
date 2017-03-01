@@ -512,7 +512,7 @@ null _   = False
 -- > size (singleton 1 'a')                       == 1
 -- > size (fromList([(1,'a'), (2,'c'), (3,'b')])) == 3
 size :: IntMap a -> Int
-size (Bin _ _ l r) = size l + size r
+size (Bin _ _ l r) = let !s = size l + size r in s
 size (Tip _ _) = 1
 size Nil = 0
 {-# INLINE size #-}
