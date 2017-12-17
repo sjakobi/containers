@@ -5,14 +5,16 @@ module Main where
 import Control.Applicative (Const(Const, getConst), pure)
 import Control.DeepSeq (rnf)
 import Control.Exception (evaluate)
-import Criterion.Main (bench, defaultMain, whnf, nf)
+import Gauge.Main (bench, defaultMain, whnf, nf)
 import Data.Functor.Identity (Identity(..))
 import Data.List (foldl')
 import qualified Data.Map as M
 import qualified Data.Map.Strict as MS
 import Data.Map (alterF)
 import Data.Maybe (fromMaybe)
+import Data.Monoid (Sum(..))
 import Data.Functor ((<$))
+import Data.Traversable (fmapDefault, foldMapDefault)
 #if __GLASGOW_HASKELL__ >= 708
 import Data.Coerce
 #endif
@@ -28,6 +30,8 @@ main = do
         , bench "lookup present" $ whnf (lookup evens) m_even
         , bench "map" $ whnf (M.map (+ 1)) m
         , bench "map really" $ nf (M.map (+ 2)) m
+        , bench "fmapDefault" $ whnf (fmapDefault (+ 1)) m
+        , bench "fmapDefault really" $ nf (fmapDefault (+ 2)) m
         , bench "<$" $ whnf ((1 :: Int) <$) m
         , bench "<$ really" $ nf ((2 :: Int) <$) m
         , bench "alterF lookup absent" $ whnf (atLookup evens) m_odd
@@ -74,6 +78,8 @@ main = do
         , bench "foldlWithKey" $ whnf (ins elems) m
 --         , bench "foldlWithKey'" $ whnf (M.foldlWithKey' sum 0) m
         , bench "foldrWithKey" $ whnf (M.foldrWithKey consPair []) m
+        , bench "foldMap" $ nf (foldMap Sum) m
+        , bench "foldMapDefault" $ nf (foldMapDefault Sum) m
         , bench "update absent" $ whnf (upd Just evens) m_odd
         , bench "update present" $ whnf (upd Just evens) m_even
         , bench "update delete" $ whnf (upd (const Nothing) evens) m
