@@ -5,7 +5,7 @@ module Main where
 import Control.Applicative (Const(Const, getConst), pure)
 import Control.DeepSeq (rnf)
 import Control.Exception (evaluate)
-import Gauge.Main (bench, defaultMain, whnf, nf)
+import Gauge
 import Data.Functor.Identity (Identity(..))
 import Data.List (foldl')
 import qualified Data.Map as M
@@ -13,6 +13,7 @@ import qualified Data.Map.Strict as MS
 import Data.Map (alterF)
 import Data.Maybe (fromMaybe)
 import Data.Monoid (Sum(..))
+import Data.Foldable (foldMap)
 import Data.Functor ((<$))
 import Data.Traversable (fmapDefault, foldMapDefault)
 #if __GLASGOW_HASKELL__ >= 708
@@ -78,8 +79,8 @@ main = do
         , bench "foldlWithKey" $ whnf (ins elems) m
 --         , bench "foldlWithKey'" $ whnf (M.foldlWithKey' sum 0) m
         , bench "foldrWithKey" $ whnf (M.foldrWithKey consPair []) m
-        , bench "foldMap" $ nf (foldMap Sum) m
-        , bench "foldMapDefault" $ nf (foldMapDefault Sum) m
+        , bench "foldMap" $ whnf (foldMap Sum) m
+        , bench "foldMapDefault" $ whnf (foldMapDefault Sum) m
         , bench "update absent" $ whnf (upd Just evens) m_odd
         , bench "update present" $ whnf (upd Just evens) m_even
         , bench "update delete" $ whnf (upd (const Nothing) evens) m
