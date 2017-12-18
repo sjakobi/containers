@@ -4,11 +4,13 @@ import Control.Applicative
 import Control.DeepSeq (rnf)
 import Control.Exception (evaluate)
 import Control.Monad.Trans.State.Strict
-import Criterion.Main (bench, bgroup, defaultMain, nf)
-import Data.Foldable (foldl', foldr')
+import Gauge (bench, bgroup, defaultMain, nf, whnf)
+import Data.Foldable (foldl', foldr', foldMap)
+import Data.Monoid (Sum(..))
 import qualified Data.Sequence as S
 import qualified Data.Foldable
-import Data.Traversable (traverse)
+import Data.Monoid (Sum(..))
+import Data.Traversable (traverse, fmapDefault, foldMapDefault)
 import System.Random (mkStdGen, randoms)
 
 main = do
@@ -52,6 +54,30 @@ main = do
          , bench "100" $ nf (S.partition even) s100
          , bench "1000" $ nf (S.partition even) s1000
          , bench "10000" $ nf (S.partition even) s10000
+         ]
+      , bgroup "fmap"
+         [ bench "10" $ nf (fmap (+1)) s10
+         , bench "100" $ nf (fmap (+1)) s100
+         , bench "1000" $ nf (fmap (+1)) s1000
+         , bench "10000" $ nf (fmap (+1)) s10000
+         ]
+      , bgroup "fmapDefault"
+         [ bench "10" $ nf (fmapDefault (+1)) s10
+         , bench "100" $ nf (fmapDefault (+1)) s100
+         , bench "1000" $ nf (fmapDefault (+1)) s1000
+         , bench "10000" $ nf (fmapDefault (+1)) s10000
+         ]
+      , bgroup "foldMap"
+         [ bench "10" $ whnf (foldMap Sum) s10
+         , bench "100" $ whnf (foldMap Sum) s100
+         , bench "1000" $ whnf (foldMap Sum) s1000
+         , bench "10000" $ whnf (foldMap Sum) s10000
+         ]
+      , bgroup "foldMapDefault"
+         [ bench "10" $ whnf (foldMapDefault Sum) s10
+         , bench "100" $ whnf (foldMapDefault Sum) s100
+         , bench "1000" $ whnf (foldMapDefault Sum) s1000
+         , bench "10000" $ whnf (foldMapDefault Sum) s10000
          ]
       , bgroup "foldl'"
          [ bench "10" $ nf (foldl' (+) 0) s10
