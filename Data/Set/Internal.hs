@@ -1060,12 +1060,12 @@ fromDistinctAscList (x0 : xs0) = go (1::Int) (Bin 1 x0 Tip Tip) xs0
                         (r :*: zs) -> (link y l r :*: zs)
 
 fromDistinctAscListOfSize :: Size -> [a] -> Set a
-fromDistinctAscListOfSize 0 _ = Tip
-fromDistinctAscListOfSize n xs = Bin n x (fromDistinctAscListOfSize n' left)
-                                         (fromDistinctAscListOfSize (n - n' - 1) right)
-  where
-    n' = n `shiftR` 1 -- can we use unsafeShiftR instead?
-    (left, x:right) = List.splitAt n' xs
+fromDistinctAscListOfSize n xs =
+    case List.splitAt n' xs of
+      (_, [] ) -> Tip
+      (l, x:r) -> Bin n x (fromDistinctAscListOfSize n'           l)
+                          (fromDistinctAscListOfSize (n - n' - 1) r)
+  where n' = n `shiftR` 1
 
 -- | /O(n)/. Build a set from a descending list of distinct elements in linear time.
 -- /The precondition (input list is strictly descending) is not checked./
