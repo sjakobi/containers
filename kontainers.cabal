@@ -1,4 +1,4 @@
-name: containers
+name: kontainers
 version: 0.6.0.1
 license: BSD3
 license-file: LICENSE
@@ -102,7 +102,7 @@ benchmark intmap-benchmarks
   ghc-options: -O2
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6,
     deepseq >= 1.1.0.0 && < 1.5
 
@@ -113,7 +113,7 @@ benchmark intset-benchmarks
   ghc-options: -O2
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6,
     deepseq >= 1.1.0.0 && < 1.5
 
@@ -124,7 +124,7 @@ benchmark map-benchmarks
   ghc-options: -O2
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6,
     deepseq >= 1.1.0.0 && < 1.5,
     transformers
@@ -136,7 +136,7 @@ benchmark sequence-benchmarks
   ghc-options: -O2
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6,
     deepseq >= 1.1.0.0 && < 1.5,
     random < 1.2,
@@ -149,7 +149,7 @@ benchmark set-benchmarks
   ghc-options: -O2
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6,
     deepseq >= 1.1.0.0 && < 1.5
 
@@ -161,7 +161,7 @@ benchmark set-operations-intmap
   ghc-options: -O2
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6
 
 benchmark set-operations-intset
@@ -172,7 +172,7 @@ benchmark set-operations-intset
   ghc-options: -O2
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6
 
 benchmark set-operations-map
@@ -183,7 +183,7 @@ benchmark set-operations-map
   ghc-options: -O2
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6
 
 benchmark set-operations-set
@@ -194,7 +194,7 @@ benchmark set-operations-set
   ghc-options: -O2
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6
 
 benchmark lookupge-intmap
@@ -217,7 +217,7 @@ benchmark lookupge-intmap
     Data.IntMap.Internal
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6,
     deepseq >= 1.1.0.0 && < 1.5,
     ghc-prim
@@ -246,7 +246,7 @@ benchmark lookupge-map
     Data.Map.Internal
   build-depends:
     base >= 4.6 && < 5,
-    containers,
+    kontainers,
     criterion >= 0.4.0 && < 1.6,
     deepseq >= 1.1.0.0 && < 1.5,
     ghc-prim
