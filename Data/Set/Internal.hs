@@ -150,6 +150,9 @@ module Data.Set.Internal (
             , delete
             , powerSet
 
+            , deserialize
+            , deserialize'
+
             -- * Combine
             , union
             , unions
@@ -231,7 +234,7 @@ module Data.Set.Internal (
 
 import Prelude hiding (filter,foldl,foldr,null,map,take,drop,splitAt)
 import qualified Data.List as List
-import Data.Bits (shiftL, shiftR)
+import Data.Bits (shiftL, shiftR, unsafeShiftR)
 #if !MIN_VERSION_base(4,8,0)
 import Data.Monoid (Monoid(..))
 #endif
@@ -244,6 +247,7 @@ import qualified Data.Foldable as Foldable
 import Data.Foldable (Foldable (foldMap))
 #endif
 import Data.Typeable
+import Control.Applicative (liftA3)
 import Control.DeepSeq (NFData(rnf))
 
 import Utils.Containers.Internal.StrictPair
@@ -1758,6 +1762,43 @@ instance Monoid (MergeSet a) where
 -- @since 0.5.11
 disjointUnion :: Set a -> Set b -> Set (Either a b)
 disjointUnion as bs = merge (mapMonotonic Left as) (mapMonotonic Right bs)
+
+deserialize
+  :: Applicative m
+  => Size
+  -> m a
+  -> m (Set a)
+deserialize sz get0 = go sz get0
+  where
+    -- go :: Size -> m (Set a)
+    go n get
+      | n <= 0
+      = pure Tip
+      | otherwise
+      = liftA3 (\l x r -> l `seq` x `seq` r `seq` Bin n x l r)
+           (go n_half get)
+           get
+           (go (n - n_half - 1) get)
+      where n_half = n `unsafeShiftR` 1
+{-# inline deserialize #-}
+
+deserialize'
+  :: Monad m
+  => Size
+  -> m a
+  -> m (Set a)
+deserialize' sz elem = go sz
+  where
+    -- go :: Size -> m (Set a)
+    go n
+      | n <= 0    = pure Tip
+      | otherwise = do
+           l <- go n_half
+           x <- elem
+           r <- go (n - n_half - 1)
+           pure $! Bin n x l r
+      where n_half = n `unsafeShiftR` 1
+{-# inline deserialize' #-}
 
 {--------------------------------------------------------------------
   Debugging

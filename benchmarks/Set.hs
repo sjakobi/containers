@@ -4,16 +4,22 @@ module Main where
 
 import Control.DeepSeq (rnf)
 import Control.Exception (evaluate)
+import Control.Monad (replicateM)
 import Gauge (bench, defaultMain, whnf)
+import Gauge.Benchmark (nfIO)
 import Data.List (foldl')
-import qualified Data.Set as S
+import Data.IORef
+import qualified Data.Set.Internal as S
 
 main = do
+{-
     let s = S.fromAscList elems :: S.Set Int
         s_even = S.fromAscList elems_even :: S.Set Int
         s_odd = S.fromAscList elems_odd :: S.Set Int
     evaluate $ rnf [s, s_even, s_odd]
+-}
     defaultMain
+{-
         [ bench "member" $ whnf (member elems) s
         , bench "insert" $ whnf (ins elems) S.empty
         , bench "map" $ whnf (S.map (+ 1)) s
@@ -37,7 +43,12 @@ main = do
         , bench "disjoint:true" $ whnf (S.disjoint s_odd) s_even
         , bench "null.intersection:false" $ whnf (S.null. S.intersection s) s_even
         , bench "null.intersection:true" $ whnf (S.null. S.intersection s_odd) s_even
+-}
+        [ bench "deserialize_old" $ nfIO (deserialize_old 100000)
+        , bench "deserialize" $ nfIO (deserialize 100000)
+        , bench "deserialize'" $ nfIO (deserialize' 100000)
         ]
+{-
   where
     elems = [1..2^12]
     elems_even = [2,4..2^12]
@@ -51,3 +62,22 @@ ins xs s0 = foldl' (\s a -> S.insert a s) s0 xs
 
 del :: [Int] -> S.Set Int -> S.Set Int
 del xs s0 = foldl' (\s k -> S.delete k s) s0 xs
+-}
+
+deserialize :: Int -> IO (S.Set Int)
+deserialize n = do
+    ref <- newIORef 0
+    let get = readIORef ref <* modifyIORef' ref succ
+    S.deserialize n get
+  
+deserialize' :: Int -> IO (S.Set Int)
+deserialize' n = do
+    ref <- newIORef 0
+    let get = readIORef ref <* modifyIORef' ref succ
+    S.deserialize' n get
+  
+deserialize_old :: Int -> IO (S.Set Int)
+deserialize_old n = do
+    ref <- newIORef 0
+    let get = readIORef ref <* modifyIORef' ref succ
+    S.fromDistinctAscList <$> replicateM n get
