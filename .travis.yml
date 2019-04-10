@@ -26,19 +26,17 @@ before_install:
 
 install:
  - travis_retry cabal update
- - cabal install --only-dependencies
- # we need to install the test-suite and benchmark deps manually as the cabal
- # solver would otherwise complain about cyclic deps
+ - cabal install --only-dependencies --enable-benchmark
+ # we need to install the test-suite manually as the cabal solver would
+ # otherwise complain about cyclic deps
  - cabal install 'test-framework >= 0.3.3' 'test-framework-quickcheck2 >= 0.2.9' 'QuickCheck >= 2.7.1' 'ChasingBottoms' 'HUnit' 'test-framework-hunit'
-
- # If we enable benchmarks, we'll need 'criterion >= 0.4.0 && < 1.2'
 
 # Here starts the actual work to be performed for the package under
 # test; any command which exits with a non-zero exit code causes the
 # build to fail.
 script:
  # -v2 provides useful information for debugging
- - cabal configure -v2 --enable-tests
+ - cabal configure -v2 --enable-tests --enable-benchmarks
 
  # We'd like to
  # --enable-benchmarks
