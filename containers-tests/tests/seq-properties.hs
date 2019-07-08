@@ -20,7 +20,7 @@ import Control.Applicative (Applicative(..), liftA2)
 import Control.Arrow ((***))
 import Control.Monad.Trans.State.Strict
 import Data.Array (listArray)
-import Data.Foldable (Foldable(foldl, foldl1, foldr, foldr1, foldMap, fold), toList, all, sum, foldl', foldr')
+import Data.Foldable (Foldable(foldl, foldl1, foldr, foldr1, foldMap, fold), toList, all, sum, foldl', foldr', sequenceA_)
 import Data.Functor ((<$>), (<$))
 import Data.Maybe
 import Data.Function (on)
@@ -129,6 +129,7 @@ main = defaultMain
        , testProperty "foldMapWithIndex/foldlWithIndex" prop_foldMapWithIndexL
        , testProperty "foldMapWithIndex/foldrWithIndex" prop_foldMapWithIndexR
        , testProperty "traverseWithIndex" prop_traverseWithIndex
+       , testProperty "traverseWithIndex_" prop_traverseWithIndex_
        , testProperty "reverse" prop_reverse
        , testProperty "zip" prop_zip
        , testProperty "zipWith" prop_zipWith
@@ -758,6 +759,11 @@ prop_traverseWithIndex :: Seq Int -> Bool
 prop_traverseWithIndex xs =
     runState (traverseWithIndex (\i x -> modify ((i,x) :)) xs) [] ==
     runState (sequenceA . mapWithIndex (\i x -> modify ((i,x) :)) $ xs) [] 
+
+prop_traverseWithIndex_ :: Seq Int -> Bool
+prop_traverseWithIndex_ xs =
+    runState (traverseWithIndex_ (\i x -> modify ((i,x) :)) xs) [] ==
+    runState (sequenceA_ . mapWithIndex (\i x -> modify ((i,x) :)) $ xs) []
 
 prop_reverse :: Seq A -> Bool
 prop_reverse xs =
