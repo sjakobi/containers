@@ -226,6 +226,7 @@ module Data.Sequence (
     -- * Transformations
     mapWithIndex,   -- :: (Int -> a -> b) -> Seq a -> Seq b
     traverseWithIndex, -- :: Applicative f => (Int -> a -> f b) -> Seq a -> f (Seq b)
+    traverseWithIndex_, -- :: Applicative f => (Int -> a -> f b) -> Seq a -> f ()
     reverse,        -- :: Seq a -> Seq a
     intersperse,    -- :: a -> Seq a -> Seq a
     -- ** Zips and unzip
