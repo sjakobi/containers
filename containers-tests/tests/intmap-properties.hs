@@ -2,8 +2,10 @@
 
 #ifdef STRICT
 import Data.IntMap.Strict as Data.IntMap hiding (showTree)
+import Data.IntMap.Merge.Strict
 #else
 import Data.IntMap.Lazy as Data.IntMap hiding (showTree)
+import Data.IntMap.Merge.Lazy
 #endif
 import Data.IntMap.Internal.Debug (showTree)
 import IntMapValidity (valid)
@@ -143,6 +145,7 @@ main = defaultMain
              , testProperty "intersectionWith model" prop_intersectionWithModel
              , testProperty "intersectionWithKey model" prop_intersectionWithKeyModel
              , testProperty "mergeWithKey model"   prop_mergeWithKeyModel
+             , testProperty "mergeA effects"       prop_mergeA_effects
              , testProperty "fromAscList"          prop_ordered
              , testProperty "fromList then toList" prop_list
              , testProperty "toDescList"           prop_descList
@@ -934,6 +937,19 @@ prop_mergeWithKeyModel xs ys
           -- optimalization. There are too many call patterns here so several
           -- warnings are issued if testMergeWithKey gets inlined.
           {-# NOINLINE testMergeWithKey #-}
+
+-- This uses the instance
+--     Monoid a => Applicative ((,) a)
+-- to test that effects are sequenced in ascending key order.
+prop_mergeA_effects :: [Int] -> [Int] -> Bool
+prop_mergeA_effects xs ys
+  = effects == sort effects
+  where
+    (effects, _m) = mergeA whenMissing whenMissing whenMatched mx my
+    whenMissing = traverseMissing (\k _ -> ([k], ()))
+    whenMatched = zipWithAMatched (\k _ _ -> ([k], ()))
+    mx = fromList (zip xs (repeat ()))
+    my = fromList (zip ys (repeat ()))
 
 ----------------------------------------------------------------
 
